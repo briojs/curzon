@@ -37,7 +37,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "clipanion": "^4.0.0-rc.3",
     "coloid": "0.0.2",
     "defu": "^6.1.4",
     "figures": "^6.1.0"
