@@ -50,9 +50,15 @@ The initial settings of the manifest can be changed by using the \`initScope\` a
     initialValue: true,
   });
 
+  number = options.number('number', {
+    description: 'A number option',
+    required: true,
+    short: 'n',
+  });
+
   async run() {
     console.log(
-      `Hello, ${this.name}! You are using ${this.package} package manager and your test suite is ${this.isTest ? 'enabled' : 'disabled'}.`,
+      `Hello, ${this.name}! You are using ${this.package} package manager and your test suite is ${this.isTest ? 'enabled' : 'disabled'}. The number is ${this.number}.`,
     );
   }
 }

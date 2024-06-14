@@ -227,6 +227,17 @@ export class Cli {
         }
       }
 
+      if (option.type === 'number' && value) {
+        value = Number.parseFloat(value);
+
+        if (Number.isNaN(value)) {
+          coloid.error(
+            `Option ${colorText(key, this.meta.color)} must be a number`,
+          );
+          return;
+        }
+      }
+
       if (value === undefined && option.options.initialValue !== undefined) {
         value = option.options.initialValue;
       }

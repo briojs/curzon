@@ -7,7 +7,12 @@ export type GeneralOptions<T = any> = {
   short?: string;
 };
 
-export type OptionType = 'boolean' | 'positional' | 'array' | 'string';
+export type OptionType =
+  | 'boolean'
+  | 'positional'
+  | 'array'
+  | 'string'
+  | 'number';
 
 export class Options<T = any> {
   // This field is used to identify if field is an Option
@@ -85,6 +90,20 @@ export class StringOption extends Options<GeneralOptions> {
   }
 }
 
+export class NumberOption extends Options<GeneralOptions> {
+  constructor(
+    public name: string,
+    options?: GeneralOptions,
+  ) {
+    super(
+      defu(options, {
+        required: false,
+      }),
+      'number',
+    );
+  }
+}
+
 export const options = {
   boolean: (name: string, options?: BooleanOptions) =>
     new BooleanOption(name, options) as unknown as boolean,
@@ -94,4 +113,6 @@ export const options = {
     new ArrayOption(name, options) as unknown as T[],
   string: (name: string, options?: GeneralOptions) =>
     new StringOption(name, options) as unknown as string,
+  number: (name: string, options?: GeneralOptions) =>
+    new NumberOption(name, options) as unknown as number,
 };
