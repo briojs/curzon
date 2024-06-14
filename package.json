@@ -1,0 +1,45 @@
+{
+  "name": "template",
+  "version": "0.0.0",
+  "description": "",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "unbuild",
+    "lint": "eslint . && biome check .",
+    "lint:fix": "eslint . --fix && biome check --apply .",
+    "format": "biome format --write",
+    "test": "vitest",
+    "prepack": "bun run build",
+    "dev": "jiti playground/index.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.8.0",
+    "@types/bun": "latest",
+    "eslint": "^9.1.1",
+    "eslint-config-briojs": "^0.0.9",
+    "jiti": "^1.21.3",
+    "unbuild": "^2.0.0",
+    "vitest": "^1.6.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "clipanion": "^4.0.0-rc.3",
+    "coloid": "0.0.2",
+    "defu": "^6.1.4",
+    "figures": "^6.1.0"
+  }
+}
