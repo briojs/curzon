@@ -117,12 +117,6 @@ export function parseRawArgs<T = Default>(
 
     if (j === 0) {
       out._ = [...out._, arg];
-    } else if (arg.slice(j, j + 3) === 'no-') {
-      name = arg.slice(Math.max(0, j + 3));
-      if (strict && !~keys.indexOf(name)) {
-        return opts.unknown?.(arg) as T;
-      }
-      out[name] = false;
     } else {
       for (idx = j + 1; idx < arg.length; idx++) {
         if (arg.codePointAt(idx) === 61) {

@@ -1,7 +1,7 @@
 {
   "name": "curzon",
   "repository": "briojs/curzon",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CLI builder",
   "license": "MIT",
   "type": "module",

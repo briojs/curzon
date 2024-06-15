@@ -11,8 +11,13 @@ class HelloCommand extends BaseCommand {
 
   name = options.positional('name');
 
+  'no-tsconfig' = options.boolean('no-tsconfig', {
+    initialValue: false,
+    description: 'Do not write the tsconfig file',
+  });
+
   async run() {
-    console.log(`helooooooo ${this.name}!`);
+    console.log(`helooooooo ${this.name} ${this['no-tsconfig']}!`);
   }
 }
 
