@@ -1,9 +1,19 @@
-## curzon
+## 🪵 curzon
 
 [![npm version](https://img.shields.io/npm/v/curzon?color=yellow)](https://npmjs.com/package/curzon)
 [![npm downloads](https://img.shields.io/npm/dm/curzon?color=yellow)](https://npmjs.com/package/curzon)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/curzon?color=yellow)](https://bundlephobia.com/package/curzon)
 [![license](https://img.shields.io/github/license/briojs/curzon?color=yellow)](https://github.com/briojs/curzon/blob/main/LICENSE)
+
+### Why?
+
+- **Generates beautiful help menu**
+
+- **Create Posix-like tools or advanced CLIs**
+
+- **Multiple arguments types**
+
+- **Supports nested commands**
 
 ### Install
 
