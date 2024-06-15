@@ -29,30 +29,35 @@ export const getHelpMenu = (cli: Cli) => {
   lines.push(
     sectionTitle(cli, title),
     indent(colorText(`${mainSymbols.pointer} ${cli.meta.description}`, 'gray')),
-    `\n${indent(`${colorText('$', cli.meta.color)} ${cli.meta.binaryName} <command> [arguments]`)} \n`,
+    `\n${indent(`${colorText('$', cli.meta.color)} ${cli.meta.binaryName} <command> [arguments]`)}`,
   );
 
   const categories = getCategories(cli);
 
-  lines.push(sectionTitle(cli, 'Commands'));
-  for (const cmd of categories.without) {
-    lines.push(
-      indent(
-        `${cli.meta.binaryName} ${cmd.paths.join(' ')} ${getArgumentsString(cmd)} \n ${indent(colorText(cmd.meta.description, 'gray'))}`,
-      ),
-    );
-  }
-
-  for (const category in categories.with) {
-    lines.push(sectionTitle(cli, category, false));
-    for (const cmd of categories.with[category]) {
+  if (cli.commands.length > 0) {
+    lines.push(sectionTitle(cli, 'Commands'), '');
+    for (const cmd of categories.without) {
+      const isLast =
+        categories.without.indexOf(cmd) === categories.without.length - 1;
       lines.push(
         indent(
-          `${cli.meta.binaryName} ${cmd.paths.join(' ')} ${getArgumentsString(cmd)} \n ${indent(colorText(cmd.meta.description, 'gray'))}`,
+          `${cli.meta.binaryName} ${cmd.paths.join(' ')} ${getArgumentsString(cmd)} \n ${indent(colorText(cmd.meta.description, 'gray'), 3)}${isLast ? '' : '\n'}`,
         ),
       );
     }
+
+    for (const category in categories.with) {
+      lines.push(sectionTitle(cli, category, false));
+      for (const cmd of categories.with[category]) {
+        lines.push(
+          indent(
+            `${cli.meta.binaryName} ${cmd.paths.join(' ')} ${getArgumentsString(cmd)} \n ${indent(colorText(cmd.meta.description, 'gray'), 3)}`,
+          ),
+        );
+      }
+    }
   }
+  lines.push('');
 
   return lines.join('\n');
 };

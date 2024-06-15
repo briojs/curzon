@@ -147,6 +147,7 @@ const cli = createCli({
 
 cli.use([
   TestCommand,
+  TestCommand,
   HelloCommand,
   GoodbyeCommand,
   AddCommand,
