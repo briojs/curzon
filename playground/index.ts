@@ -9,26 +9,10 @@ class HelloCommand extends BaseCommand {
     description: 'This command will say hello to you.',
   };
 
-  pos = options.positional('pos');
-
-  test = options.string('test', {
-    required: false,
-    description: 'This is a test option',
-  });
-
-  number = options.number('number', {
-    required: false,
-    description: 'This is a number option',
-  });
-
-  isTrue = options.boolean('isTrue', {
-    required: false,
-    description: 'This is a boolean option',
-    short: 't',
-  });
+  name = options.positional('name');
 
   async run() {
-    console.log(`helooooooo! ${this.pos}`);
+    console.log(`helooooooo ${this.name}!`);
   }
 }
 
@@ -51,6 +35,8 @@ class ByeCommand extends BaseCommand {
     description: 'This command will say goodbye byeee to you.',
   };
 
+  pos = options.positional('pos');
+
   async run() {
     console.log('Goodbye, world!');
   }
@@ -64,7 +50,7 @@ class WhyCmd extends BaseCommand {
   };
 
   async run() {
-    console.log('Goodbye, world!');
+    console.log('Goodwhy, world!');
   }
 }
 
@@ -113,4 +99,4 @@ const cli = createCli({
 
 cli.use([HelloCommand, GoodbyeCommand, ByeCommand, WhyCmd]);
 
-cli.run({});
+cli.run();
