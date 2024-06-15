@@ -19,19 +19,20 @@ export type CliMeta = {
     | 'cyan'
     | 'white'
     | 'orange';
+  rootCommand?: Command;
 };
 
 export type CommandFactoryOptions = BooleanOption | PositionalOption;
 
 export class CommandFactory {
-  public readonly paths: Array<string> = [];
+  public paths: Array<string> = [];
   private readonly _meta: MetaFactory = new MetaFactory();
   public run: (() => Promise<void> | void) | undefined;
   public options: Record<string, CommandFactoryOptions> = {};
   // @ts-expect-error Error
   public command: CommandFactory;
   public subcommands: CommandFactory[] = [];
-  public __do_not__: boolean = false;
+  public __is_root__: boolean = false;
 
   constructor() {}
 
@@ -49,7 +50,6 @@ export class CommandFactory {
 
   addOption(key: string, option: CommandFactoryOptions) {
     option.refKey = key;
-
     this.options[option.name] = option;
   }
 
@@ -60,6 +60,7 @@ export class CommandFactory {
 
 export class Cli {
   commands: CommandFactory[] = [];
+  tree: CommandFactory[] = [];
   _temp: Command[] = [];
 
   constructor(public meta: CliMeta = {}) {
@@ -81,6 +82,36 @@ export class Cli {
     } else {
       _use(input);
     }
+  }
+
+  buildCommandTree(commands: CommandFactory[]): CommandFactory[] {
+    const root: CommandFactory[] = [];
+
+    for (const command of commands) {
+      let currentLevel = root;
+
+      for (const [index, path] of command.paths.entries()) {
+        let existingCommand = currentLevel.find(
+          (cmd) => cmd.paths[index] === path,
+        );
+
+        if (!existingCommand) {
+          existingCommand = new CommandFactory();
+          existingCommand.paths = command.paths.slice(0, index + 1);
+          currentLevel.push(existingCommand);
+        }
+
+        if (index === command.paths.length - 1) {
+          existingCommand.options = { ...command.options };
+          existingCommand.run = command.run;
+          existingCommand.setMeta(command.meta);
+        }
+
+        currentLevel = existingCommand.subcommands;
+      }
+    }
+
+    return root;
   }
 
   register() {
@@ -119,40 +150,52 @@ export class Cli {
           }),
       );
 
-      if (commandFactory.paths.length === 1) {
-        commandFactory.command = commandFactory;
-
-        this.commands.push(commandFactory);
-      } else {
-        const parent = this.commands.find((command) => {
-          return command;
-        });
-
-        if (parent) {
-          parent.subcommands.push(commandFactory);
-        } else {
-          this.commands.push(commandFactory);
-        }
-      }
+      this.commands.push(commandFactory);
     }
+
+    this.tree = this.buildCommandTree(this.commands);
   }
 
-  async run(rawArgs?: string[]) {
+  async run(options?: {
+    rootCommand?: Command;
+    rawArgs?: string[];
+  }) {
+    const { rootCommand, rawArgs } = options || {};
     try {
       this.register();
 
       const args = rawArgs || process.argv.slice(2);
-      const rootCommand = new CommandFactory();
+      const _rootCommand = new CommandFactory();
 
-      rootCommand.addPath('');
+      _rootCommand.paths = [''];
 
-      rootCommand.subcommands = this.commands;
-      rootCommand.__do_not__ = true;
+      if (rootCommand) {
+        if (rootCommand?.meta) {
+          _rootCommand.setMeta(rootCommand.meta);
+        }
 
-      const command = this.resolveCommand(rootCommand, args);
+        const constructed = new rootCommand();
+
+        for (const key in constructed) {
+          // @ts-expect-error Error
+          if (constructed[key] && constructed[key].__option__) {
+            // @ts-expect-error Error
+            _rootCommand.addOption(key, constructed[key]);
+          }
+        }
+
+        if (constructed.run) {
+          _rootCommand.setRun(constructed.run);
+        }
+      }
+
+      _rootCommand.subcommands = this.tree;
+      _rootCommand.__is_root__ = true;
+
+      const command = this.resolveCommand(_rootCommand, args);
 
       if (args.includes('--help') || args.includes('-h')) {
-        this.showHelp(command);
+        this.showHelp(command?.run ? command : undefined);
         return;
       }
 
@@ -161,7 +204,15 @@ export class Cli {
         return;
       }
 
-      if (command?.__do_not__) {
+      if (!command?.run) {
+        this.showHelp();
+
+        return console.log(
+          colorText('Could not find a command to run', this.meta.color),
+        );
+      }
+
+      if (!command.run) {
         this.showHelp();
       }
 

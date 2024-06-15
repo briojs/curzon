@@ -2,138 +2,104 @@ import { BaseCommand, Meta } from '../src';
 import { createCli } from '../src/cli.ts';
 import { options } from '../src/options.ts';
 
-class TestCommand extends BaseCommand {
-  static paths = ['test'];
+class HelloCommand extends BaseCommand {
+  static paths = ['test', 'hello'];
 
   static meta: Meta = {
-    description:
-      'This command will setup a new package in your local directory.',
-    details: `
-This command will setup a new package in your local directory.
-
-If the \`-p,--private\` or \`-w,--workspace\` options are set, the package will be private by default.
-
-If the \`-w,--workspace\` option is set, the package will be configured to accept a set of workspaces in the \`packages/\` directory.
-
-If the \`-i,--install\` option is given a value, Yarn will first download it using \`yarn set version\` and only then forward the init call to the newly downloaded bundle. Without arguments, the downloaded bundle will be \`latest\`.
-
-The initial settings of the manifest can be changed by using the \`initScope\` and \`initFields\` configuration values. Additionally, Yarn will generate an EditorConfig file whose rules can be altered via \`initEditorConfig\`, and will initialize a Git repository in the current directory.
-    `,
-    examples: [
-      [`Create a new package in the local directory`, `init`],
-      [`Create a new private package in the local directory`, `init -p`],
-      [
-        `Create a new package and store the Yarn release inside`,
-        `init -i=latest`,
-      ],
-      [
-        `Create a new private package and defines it as a workspace root`,
-        `init -w`,
-      ],
-    ],
+    description: 'This command will say hello to you.',
   };
 
-  name = options.positional('name', {
-    description: 'The name of the package',
-    required: true,
-  });
+  pos = options.positional('pos');
 
-  package = options.string('package', {
-    description: 'The package manager to use',
-    required: true,
-    short: 'p',
-  });
-
-  isTest = options.boolean('test', {
-    description: 'Run the test suite',
-    short: 't',
-    initialValue: true,
+  test = options.string('test', {
+    required: false,
+    description: 'This is a test option',
   });
 
   number = options.number('number', {
-    description: 'A number option',
-    required: true,
-    short: 'n',
+    required: false,
+    description: 'This is a number option',
+  });
+
+  isTrue = options.boolean('isTrue', {
+    required: false,
+    description: 'This is a boolean option',
+    short: 't',
   });
 
   async run() {
-    console.log(
-      `Hello, ${this.name}! You are using ${this.package} package manager and your test suite is ${this.isTest ? 'enabled' : 'disabled'}. The number is ${this.number}.`,
-    );
-  }
-}
-
-class HelloCommand extends BaseCommand {
-  static paths = ['hello'];
-  static meta = {
-    description: 'Prints a hello message',
-    category: 'Greeting',
-  };
-
-  async run() {
-    console.log('Hello, World!');
+    console.log(`helooooooo! ${this.pos}`);
   }
 }
 
 class GoodbyeCommand extends BaseCommand {
-  static paths = ['goodbye'];
-  static meta = {
-    description: 'Prints a goodbye message',
-    category: 'Greeting',
+  static paths = ['test', 'goodbye'];
+
+  static meta: Meta = {
+    description: 'This command will say goodbye to you.',
   };
 
-  arr = options.array<string | number>('arr', {
-    description: 'An array option',
-    required: true,
-    short: 'a',
-  });
-
   async run() {
-    console.log(this.arr);
+    console.log('Goodbye, world!');
   }
 }
 
-class AddCommand extends BaseCommand {
-  static paths = ['add'];
-  static meta = {
-    description: 'Adds two numbers',
-    category: 'Math',
+class ByeCommand extends BaseCommand {
+  static paths = ['test', 'goodbye', 'bye'];
+
+  static meta: Meta = {
+    description: 'This command will say goodbye byeee to you.',
   };
 
-  num1 = options.string('num1', {
-    description: 'The first number',
-    required: true,
-  });
-
-  num2 = options.string('num2', {
-    description: 'The second number',
-    required: true,
-  });
-
   async run() {
-    console.log(`The sum is: ${this.num1 + this.num2}`);
+    console.log('Goodbye, world!');
   }
 }
 
-class SubtractCommand extends BaseCommand {
-  static paths = ['subtract'];
-  static meta = {
-    description: 'Subtracts two numbers',
-    category: 'Math',
+class WhyCmd extends BaseCommand {
+  static paths = ['test', 'goodbye', 'bye', 'why'];
+
+  static meta: Meta = {
+    description: 'This command will say whyyyyyy to you.',
   };
 
-  num1 = options.string('num1', {
-    description: 'The first number',
-    required: true,
+  async run() {
+    console.log('Goodbye, world!');
+  }
+}
+
+class RootCommand extends BaseCommand {
+  static meta: Meta = {
+    description: `create a new package`,
+    details: `This command will setup a new package in your local directory.`,
+    examples: [[`Create a new package in the local directory`, `bun init`]],
+  };
+
+  pos = options.positional('pos');
+
+  test = options.string('test', {
+    required: false,
+    description: 'This is a test option',
   });
 
-  num2 = options.string('num2', {
-    description: 'The second number',
-    required: true,
+  number = options.number('number', {
+    required: false,
+    description: 'This is a number option',
+  });
+
+  isTrue = options.boolean('isTrue', {
+    required: false,
+    description: 'This is a boolean option',
+    short: 't',
+  });
+
+  array = options.array('array', {
+    required: false,
+    description: 'This is an array option',
   });
 
   async run() {
-    console.log(`The difference is: ${Number(this.num1) - Number(this.num2)}`);
+    console.log(`This is the root command: ${this.test}`);
   }
 }
 
@@ -145,12 +111,6 @@ const cli = createCli({
   color: 'yellow',
 });
 
-cli.use([
-  TestCommand,
-  TestCommand,
-  HelloCommand,
-  GoodbyeCommand,
-  AddCommand,
-  SubtractCommand,
-]);
-cli.run();
+cli.use([HelloCommand, GoodbyeCommand, ByeCommand, WhyCmd]);
+
+cli.run({});

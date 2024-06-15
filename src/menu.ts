@@ -25,7 +25,6 @@ const sectionTitle = (cli: Cli, text: string, center = true) => {
 export const getHelpMenu = (cli: Cli) => {
   let lines = [];
   const title = `${cli.meta.appName} - v${cli.meta.version}`;
-
   lines.push(
     sectionTitle(cli, title),
     indent(colorText(`${mainSymbols.pointer} ${cli.meta.description}`, 'gray')),
@@ -104,28 +103,33 @@ export const getCommandHelpMenu = (cli: Cli, command: CommandFactory) => {
   let lines = [];
 
   lines.push(
-    sectionTitle(cli, command.paths.join(' ')),
+    sectionTitle(
+      cli,
+      command.__is_root__
+        ? cli.meta.appName || 'Root command'
+        : command.paths.join(' '),
+    ),
     indent(
       colorText(`${mainSymbols.pointer} ${command.meta.description}`, 'gray'),
     ),
-    `\n${indent(`${colorText('$', cli.meta.color)} ${cli.meta.binaryName} ${command.paths.join(' ')} ${getArgumentsString(command)}`)} \n`,
+    sectionTitle(cli, 'Usage', false),
+    `\n${indent(`${colorText('$', cli.meta.color)} ${cli.meta.binaryName}${command.paths[0] === '' ? '' : ' ' + command.paths.join(' ')} ${getArgumentsString(command)}`)} `,
   );
 
   if (Object.keys(command.options).length > 0) {
     lines.push(sectionTitle(cli, 'Options', false));
     for (const key in command.options) {
       const option = command.options[key];
-      const name =
-        option.type === 'positional'
-          ? option.name
-          : `--${option.name}${option.options.short ? `, -${option.options.short}` : ''}`;
+      if (option.type === 'positional') continue;
+
+      const name = `--${option.name}${option.options.short ? `, -${option.options.short}` : ''}`;
 
       lines.push(
         indent(
           `${name} ${colorText(
             option.options.required ? '(required)' : '(optional)',
             cli.meta.color,
-          )} \n ${indent(colorText(option.options.description, 'gray'), 4)}`,
+          )} ${colorText(`(${option.type})`, cli.meta.color)} \n ${indent(colorText(option.options.description ?? 'No description', 'gray'), 4)}`,
         ),
       );
     }
@@ -134,7 +138,8 @@ export const getCommandHelpMenu = (cli: Cli, command: CommandFactory) => {
   if (command.meta.details) {
     lines.push(
       sectionTitle(cli, 'Details', false),
-      `\n${command.meta.details}`,
+      '',
+      `${command.meta.details}`,
     );
   }
 
