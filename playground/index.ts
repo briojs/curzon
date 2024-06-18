@@ -37,27 +37,26 @@ class HelloCommand extends BaseCommand {
     description: 'Path to root CA certificate',
   });
 
-  dhParamsFile = options.string('dh-params-file', {
+  dhParamsFile = options.string('dh.params.file', {
     description: 'Path to Diffie Hellman parameters',
   });
 
-  serverName = options.string('server-name', {
+  serverName = options.string('server.name', {
     description: 'Server name for SNI',
   });
 
   open = options.boolean('open', {
     description: 'Open the server in the default browser',
     short: 'o',
-    defaultValue: true,
   });
 
-  lowMemoryMode = options.boolean('low-memory', {
+  lowMemoryMode = options.boolean('low.memory', {
     description:
       'This sets OPENSSL_RELEASE_BUFFERS to 1. It reduces overall performance but saves some memory.',
     short: 'lw',
   });
 
-  requestCert = options.boolean('request-cert', {
+  requestCert = options.boolean('request.cert', {
     description:
       'If set to true, the server will request a client certificate. Default is false.',
     defaultValue: false,
