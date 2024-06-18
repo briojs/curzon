@@ -1,7 +1,7 @@
 import defu from 'defu';
 
 export type GeneralOptions<T = any> = {
-  initialValue?: T;
+  defaultValue?: T;
   required?: boolean;
   description?: string;
   short?: string;
@@ -37,7 +37,7 @@ export class BooleanOption extends Options<BooleanOptions> {
   ) {
     super(
       defu(options, {
-        initialValue: false,
+        defaultValue: false,
         required: false,
       }),
       'boolean',
@@ -52,7 +52,6 @@ export class PositionalOption extends Options<GeneralOptions> {
   ) {
     super(
       defu(options, {
-        initialValue: undefined,
         required: true,
       }),
       'positional',
@@ -67,7 +66,6 @@ export class ArrayOption extends Options<GeneralOptions> {
   ) {
     super(
       defu(options, {
-        initialValue: [],
         required: false,
       }),
       'array',
@@ -82,7 +80,6 @@ export class StringOption extends Options<GeneralOptions> {
   ) {
     super(
       defu(options, {
-        initialValue: '',
         required: false,
       }),
       'string',

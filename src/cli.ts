@@ -289,9 +289,10 @@ export class Cli {
         }
       }
 
-      if (value === undefined && option.options.initialValue !== undefined) {
-        value = option.options.initialValue;
-      }
+      value =
+        value === undefined && option.options.defaultValue !== undefined
+          ? option.options.defaultValue
+          : undefined;
 
       if (option.type === 'string' && Array.isArray(value)) {
         value = value.at(-1);

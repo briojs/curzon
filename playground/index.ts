@@ -9,88 +9,62 @@ class HelloCommand extends BaseCommand {
     description: 'This command will say hello to you.',
   };
 
-  name = options.positional('name');
+  port = options.number('port', {
+    defaultValue: 3000,
+    description: 'Port to run the server on',
+    short: 'p',
+  });
 
-  'no-tsconfig' = options.boolean('no-tsconfig', {
-    initialValue: false,
-    description: 'Do not write the tsconfig file',
+  host = options.string('host', {
+    defaultValue: 'localhost',
+    description: 'Host to run the server on',
+    short: 'h',
+  });
+
+  key = options.string('key', {
+    description: 'Path to TLS key',
+  });
+
+  cert = options.string('cert', {
+    description: 'Path to TLS cert',
+  });
+
+  passphrase = options.string('passphrase', {
+    description: 'Passphrase used for TLS key or keystore',
+  });
+
+  ca = options.string('ca', {
+    description: 'Path to root CA certificate',
+  });
+
+  dhParamsFile = options.string('dh-params-file', {
+    description: 'Path to Diffie Hellman parameters',
+  });
+
+  serverName = options.string('server-name', {
+    description: 'Server name for SNI',
+  });
+
+  open = options.boolean('open', {
+    description: 'Open the server in the default browser',
+    short: 'o',
+    defaultValue: true,
+  });
+
+  lowMemoryMode = options.boolean('low-memory', {
+    description:
+      'This sets OPENSSL_RELEASE_BUFFERS to 1. It reduces overall performance but saves some memory.',
+    short: 'lw',
+  });
+
+  requestCert = options.boolean('request-cert', {
+    description:
+      'If set to true, the server will request a client certificate. Default is false.',
+    defaultValue: false,
   });
 
   async run() {
-    console.log(`helooooooo ${this.name} ${this['no-tsconfig']}!`);
-  }
-}
-
-class GoodbyeCommand extends BaseCommand {
-  static paths = ['test', 'goodbye'];
-
-  static meta: Meta = {
-    description: 'This command will say goodbye to you.',
-  };
-
-  async run() {
-    console.log('Goodbye, world!');
-  }
-}
-
-class ByeCommand extends BaseCommand {
-  static paths = ['test', 'goodbye', 'bye'];
-
-  static meta: Meta = {
-    description: 'This command will say goodbye byeee to you.',
-  };
-
-  pos = options.positional('pos');
-
-  async run() {
-    console.log('Goodbye, world!');
-  }
-}
-
-class WhyCmd extends BaseCommand {
-  static paths = ['test', 'goodbye', 'bye', 'why'];
-
-  static meta: Meta = {
-    description: 'This command will say whyyyyyy to you.',
-  };
-
-  async run() {
-    console.log('Goodwhy, world!');
-  }
-}
-
-class RootCommand extends BaseCommand {
-  static meta: Meta = {
-    description: `create a new package`,
-    details: `This command will setup a new package in your local directory.`,
-    examples: [[`Create a new package in the local directory`, `bun init`]],
-  };
-
-  pos = options.positional('pos');
-
-  test = options.string('test', {
-    required: false,
-    description: 'This is a test option',
-  });
-
-  number = options.number('number', {
-    required: false,
-    description: 'This is a number option',
-  });
-
-  isTrue = options.boolean('isTrue', {
-    required: false,
-    description: 'This is a boolean option',
-    short: 't',
-  });
-
-  array = options.array('array', {
-    required: false,
-    description: 'This is an array option',
-  });
-
-  async run() {
-    console.log(`This is the root command: ${this.test}`);
+    console.log(this);
   }
 }
 
@@ -102,6 +76,6 @@ const cli = createCli({
   color: 'yellow',
 });
 
-cli.use([HelloCommand, GoodbyeCommand, ByeCommand, WhyCmd]);
+cli.use([HelloCommand]);
 
 cli.run();
