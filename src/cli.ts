@@ -231,7 +231,7 @@ export class Cli {
 
     // remove the command name from the positional arguments
     parsedArgs._ = command.__is_root__
-      ? args
+      ? parsedArgs._
       : parsedArgs._.slice(command.paths.length);
 
     const pos = parsedArgs._;

@@ -39,6 +39,12 @@ export class InitCommand extends BaseCommand {
     short: 'r',
   });
 
+  force = options.boolean('force', {
+    description: 'Force initialization',
+    defaultValue: false,
+    short: 'f',
+  });
+
   async run() {
     console.log(this);
   }
