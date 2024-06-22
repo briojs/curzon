@@ -230,7 +230,9 @@ export class Cli {
     const parsedArgs = parseRawArgs(args);
 
     // remove the command name from the positional arguments
-    parsedArgs._ = parsedArgs._.slice(command.paths.length);
+    parsedArgs._ = command.__is_root__
+      ? args
+      : parsedArgs._.slice(command.paths.length);
 
     const pos = parsedArgs._;
 
@@ -247,6 +249,7 @@ export class Cli {
       return;
     }
 
+    console.log(parsedArgs);
     for (const key in command.options) {
       const option = command.options[key];
       const posIndex = positionals.findIndex((e) => e.name === key);
