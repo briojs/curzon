@@ -249,7 +249,6 @@ export class Cli {
       return;
     }
 
-    console.log(parsedArgs);
     for (const key in command.options) {
       const option = command.options[key];
       const posIndex = positionals.findIndex((e) => e.name === key);
