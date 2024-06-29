@@ -33,6 +33,7 @@ export class CommandFactory {
   public command: CommandFactory;
   public subcommands: CommandFactory[] = [];
   public __is_root__: boolean = false;
+  public fields: Record<string, any> = {};
 
   constructor() {}
 
@@ -51,6 +52,10 @@ export class CommandFactory {
   addOption(key: string, option: CommandFactoryOptions) {
     option.refKey = key;
     this.options[option.name] = option;
+  }
+
+  addField(key: string, value: any) {
+    this.fields[key] = value;
   }
 
   async setRun(run: () => Promise<void> | void) {
@@ -105,6 +110,7 @@ export class Cli {
           existingCommand.options = { ...command.options };
           existingCommand.run = command.run;
           existingCommand.setMeta(command.meta);
+          existingCommand.fields = command.fields;
         }
 
         currentLevel = existingCommand.subcommands;
@@ -135,11 +141,27 @@ export class Cli {
         }
       }
 
+      const keys = Object.getOwnPropertyNames(
+        Object.getPrototypeOf(command),
+      ).filter((e) => {
+        return e !== 'constructor' && e !== 'run';
+      });
+
       for (const key in command) {
         // @ts-expect-error Error
         if (command[key].__option__) {
           // @ts-expect-error Error
           commandFactory.addOption(key, command[key]);
+        }
+      }
+
+      for (const _key in keys) {
+        const key = keys[_key];
+
+        // @ts-expect-error Error
+        if (!command[key].__option__) {
+          // @ts-expect-error Error
+          commandFactory.addField(key, command[key]);
         }
       }
 
@@ -309,6 +331,11 @@ export class Cli {
       command.options[key] = value;
       // @ts-expect-error Error
       command[option.refKey] = value;
+    }
+
+    for (const key in command.fields) {
+      // @ts-expect-error Error
+      command[key] = command.fields[key];
     }
 
     await command.run?.();
